@@ -19,9 +19,20 @@ import (
 	"log"
 	"time"
 
-	pg "github.com/hieutrtr/postgresql_generator"
+	pg "github.com/hieutrtr/postgresql-generator"
 )
 
+// Users should be matched with table in postgresql server
+// CREATE TABLE users (
+//     user_id   serial,
+//     name      varchar,
+//     age       smallint,
+//     friends   int,
+//     salary    money,
+//     ipv4      inet,
+//     metadata  jsonb,
+//     CONSTRAINT user_id PRIMARY KEY(user_id)
+// );
 type Users struct {
 	name     string `pgtype:"varchar"`
 	age      uint8  `pgtype:"smallint"`
@@ -44,11 +55,11 @@ func main() {
 			if err != nil {
 				panic(err.Error())
 			}
-			c := &Config{}
-			if err = c.parse(); err != nil {
+			c := &pg.Config{}
+			if err = c.Parse(); err != nil {
 				panic(err.Error())
 			}
-			if err = pgCtrl.connect(c); err != nil {
+			if err = pgCtrl.Connect(c); err != nil {
 				panic(err.Error())
 			}
 
