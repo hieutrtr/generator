@@ -1,4 +1,4 @@
-# Package postgresql-generator
+# Package postgresql_generator
 Build on top of `github.com/icrowley/fake` and `github.com/lib/pq`
 For generating random data that are specified by `pgtype`
 
@@ -19,7 +19,7 @@ import (
 	"log"
 	"time"
 
-	pg "github.com/hieutrtr/postgresql-generator"
+	pg "github.com/hieutrtr/postgresql_generator"
 )
 
 type Users struct {

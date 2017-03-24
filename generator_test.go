@@ -1,4 +1,4 @@
-package postgresql-generator
+package postgresql_generator
 
 import (
 	"reflect"
