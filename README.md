@@ -1,6 +1,27 @@
+# Package postgresql-generator
+Build on top of `github.com/icrowley/fake` and `github.com/lib/pq`
+For generating random data that are specified by `pgtype`
+
+# Environment
+```
+export PG_HOST=localhost
+export PG_DB=postgresql
+export PG_USER=pguser
+export PG_PASS=p@ssw0rd
+```
+
 # Example
 ```go
-import pg "github.com/hieutrtr/postgresql-generator"
+package main
+
+import (
+	"fmt"
+	"log"
+	"time"
+
+	pg "github.com/hieutrtr/postgresql-generator"
+)
+
 type Users struct {
 	name     string `pgtype:"varchar"`
 	age      uint8  `pgtype:"smallint"`
