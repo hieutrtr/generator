@@ -21,7 +21,8 @@ type Config struct {
 	pgTimeOut int
 }
 
-func (c *Config) parse() error {
+// Parse environment for posgresql config
+func (c *Config) Parse() error {
 	c.pgUser = os.Getenv("PG_USER")
 	c.pgPass = os.Getenv("PG_PASS")
 	c.pgDB = os.Getenv("PG_DB")
@@ -47,7 +48,8 @@ func NewPG() (*PGCtrl, error) {
 	return &PGCtrl{}, nil
 }
 
-func (ctrl *PGCtrl) connect(cfg *Config) error {
+// Connect postgresql server with config
+func (ctrl *PGCtrl) Connect(cfg *Config) error {
 	var err error
 	connStr := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", cfg.pgUser, cfg.pgPass, cfg.pgHost, cfg.pgDB)
 	ctrl.conn, err = sql.Open("postgres", connStr)

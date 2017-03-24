@@ -15,9 +15,9 @@ func TestNewPG(t *testing.T) {
 
 func TestConnect(t *testing.T) {
 	cfg = &Config{}
-	err := cfg.parse()
+	err := cfg.Parse()
 	if err == nil {
-		err = pgCtrl.connect(cfg)
+		err = pgCtrl.Connect(cfg)
 		if err != nil {
 			t.Fatal(err.Error())
 		}
@@ -25,7 +25,7 @@ func TestConnect(t *testing.T) {
 }
 
 func TestExecute(t *testing.T) {
-	err := cfg.parse()
+	err := cfg.Parse()
 	if err == nil {
 		err = pgCtrl.Execute("INSERT INTO users (name) VALUES('test');")
 		if err != nil {
