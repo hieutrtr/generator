@@ -7,38 +7,19 @@ import (
 )
 
 type SomeStruct struct {
-	name     string `pgtype:"varchar"`
-	age      uint8  `pgtype:"smallint"`
-	friends  int    `pgtype:"int"`
-	salary   int64  `pgtype:"money"`
-	ipv4     string `pgtype:"cidr"`
-	metadata string `pgtype:"jsonb"`
+	name     string `gentype:"varchar"`
+	age      uint8  `gentype:"smallint"`
+	friends  int    `gentype:"int"`
+	salary   int64  `gentype:"money"`
+	ipv4     string `gentype:"cidr"`
+	metadata string `gentype:"jsonb"`
 }
 
 func TestGenInsertion(t *testing.T) {
-	q := genInsertion(&SomeStruct{})
+	q := GenInsertion(&SomeStruct{})
 	if !validInsertionQuery(q) {
 		t.Fatal("Invalid insert query " + q)
 	}
-}
-
-func TestGenerator(t *testing.T) {
-	numQueries := 10
-	sup := make(chan string, 10)
-	res := make(chan int, numQueries)
-
-	for w := 0; w < 10; w++ {
-		go func() {
-			for o := range sup {
-				if o == "" {
-					t.Error("Empty query is detected")
-				}
-				res <- 0
-			}
-		}()
-	}
-	NewSupplier(&SomeStruct{}, numQueries, sup)
-	<-res
 }
 
 func TestGetValueOfType(t *testing.T) {

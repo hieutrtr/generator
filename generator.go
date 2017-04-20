@@ -8,7 +8,7 @@ import (
 	"github.com/icrowley/fake"
 )
 
-func genInsertion(st interface{}) string {
+func GenInsertion(st interface{}) string {
 	ref := reflect.ValueOf(st).Elem()
 	queryFormat := "INSERT INTO users (%s) VALUES (%s);"
 	var fields string
@@ -17,7 +17,7 @@ func genInsertion(st interface{}) string {
 		typeField := ref.Type().Field(j)
 		tag := typeField.Tag
 		fields += typeField.Name
-		values += fmt.Sprint(getValueOfType(tag.Get("pgtype")))
+		values += fmt.Sprint(getValueOfType(tag.Get("gentype")))
 		if j < ref.NumField()-1 {
 			fields += ","
 			values += ","
@@ -26,19 +26,29 @@ func genInsertion(st interface{}) string {
 	return fmt.Sprintf(queryFormat, fields, values)
 }
 
-// NewSupplier push generated data into channel
-func NewSupplier(st interface{}, num int, sup chan<- string) {
-	for i := 0; i < num; i++ {
-		sup <- genInsertion(st)
+func GenJSON(st interface{}) string {
+	ref := reflect.ValueOf(st).Elem()
+	var res string
+	var fields string
+	var values string
+	for j := 0; j < ref.NumField(); j++ {
+		typeField := ref.Type().Field(j)
+		tag := typeField.Tag
+		fields = typeField.Name
+		values = fmt.Sprint(getValueOfType(tag.Get("gentype")))
+		if j < ref.NumField()-1 {
+			res += fmt.Sprintf("\"%s\":%s, ", fields, values)
+		}
 	}
-	close(sup)
+	res += fmt.Sprintf("\"%s\":%s", fields, values)
+	return fmt.Sprintf("{%s}", res)
 }
 
 func getValueOfType(tp string) interface{} {
 	// types := []string{"varchar", "smallint", "int", "money", "cidr", "jsonb"}
 	switch tp {
 	case "varchar":
-		return fmt.Sprintf("'%s'", fake.FullName())
+		return fmt.Sprintf("\"%s\"", fake.FullName())
 	case "smallint":
 		return uint8(rand.Uint32() % 100)
 	case "int":
@@ -46,7 +56,7 @@ func getValueOfType(tp string) interface{} {
 	case "money":
 		return rand.Int31()
 	case "cidr":
-		return fmt.Sprintf("'%s'", fake.IPv4())
+		return fmt.Sprintf("\"%s\"", fake.IPv4())
 	case "jsonb":
 		return fmt.Sprintf("'{\"company\":\"%s\",\"industry\":\"%s\",\"title\":\"%s\"}'", fake.Company(), fake.Industry(), fake.JobTitle())
 	default:

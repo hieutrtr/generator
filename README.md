@@ -1,6 +1,6 @@
 # Package postgresql_generator
 Build on top of `github.com/icrowley/fake` and `github.com/lib/pq`
-For generating random data that are specified by `pgtype`
+For generating random data that are specified by `gentype`
 
 # Environment
 ```
@@ -23,12 +23,12 @@ import (
 )
 
 type Users struct {
-	name     string `pgtype:"varchar"`
-	age      uint8  `pgtype:"smallint"`
-	friends  int    `pgtype:"int"`
-	salary   int32  `pgtype:"money"`
-	ipv4     string `pgtype:"cidr"`
-	metadata string `pgtype:"jsonb"`
+	name     string `gentype:"varchar"`
+	age      uint8  `gentype:"smallint"`
+	friends  int    `gentype:"int"`
+	salary   int32  `gentype:"money"`
+	ipv4     string `gentype:"cidr"`
+	metadata string `gentype:"jsonb"`
 }
 
 const numQueries = 10000
@@ -66,7 +66,14 @@ func main() {
 		}()
 	}
 	start := time.Now()
-	pg.NewSupplier(&Users{}, numQueries, sup)
+
+	go func(st interface{}, num int, sup chan<- string) {
+		for i := 0; i < num; i++ {
+			sup <- pg.GenInsertion(st)
+		}
+		close(sup)
+	}(&Users{}, numQueries, sup)
+
 	for i := 0; i < numQueries; i++ {
 		r := <-res
 		if r != nil {
