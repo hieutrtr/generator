@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"reflect"
 
-	"github.com/icrowley/fake"
+	"github.com/hieutrtr/fake"
 )
 
 func GenInsertion(st interface{}) string {
@@ -47,6 +47,9 @@ func GenJSON(st interface{}) string {
 func getValueOfType(tp string) interface{} {
 	// types := []string{"varchar", "smallint", "int", "money", "cidr", "jsonb"}
 	switch tp {
+	case "ad_state":
+		fake.UseExternalData(true)
+		return fmt.Sprintf("\"%s\"", fake.AdState())
 	case "varchar":
 		return fmt.Sprintf("\"%s\"", fake.FullName())
 	case "smallint":
